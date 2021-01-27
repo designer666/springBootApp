@@ -1,0 +1,57 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '2.3.0.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+    id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
+}
+
+apply from: './versions.gradle'
+
+sourceSets {
+    main {
+        java {
+            srcDir "$buildDir/generated-source"
+        }
+    }
+}
+
+group 'com.mine'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'org.springframework.boot:spring-boot-starter'
+    compile 'org.springframework.boot:spring-boot-starter-data-jpa'
+    compile 'org.springframework.boot:spring-boot-starter-data-jdbc'
+    compile 'org.postgresql:postgresql'
+    compile 'org.projectlombok:lombok'
+    compile 'com.querydsl:querydsl-jpa'
+    compile 'org.flywaydb:flyway-core'
+
+    annotationProcessor 'org.projectlombok:lombok'
+    annotationProcessor 'com.querydsl:querydsl-apt'
+
+    testCompile 'org.springframework.boot:spring-boot-starter-test'
+    testCompile "org.testcontainers:postgresql:${versions.postgresContainer}"
+
+//    implementation 'org.springframework.boot:spring-boot-starter-web'
+//    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+//    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+querydsl {
+    jpa = true
+    querydslSourcesDir = "$buildDir/generated-source"
+}
+
+compileQuerydsl {
+    options.annotationProcessorPath = configurations.querydsl
+}
+
+test {
+    useJUnitPlatform()
+}
+
